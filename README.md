@@ -1,5 +1,5 @@
-# Floppy_Bird
-Uses love2D to run a basic flappy birrd game. Tracks high score, has animations, and more
+# Floppy Bird
+Uses love2D to run a basic flappy bird game. Tracks high score, has animations, and more
 
 # READ ME
 
