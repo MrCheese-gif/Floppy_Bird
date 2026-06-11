@@ -25,13 +25,14 @@ You are a bird, and you have to go between the green poles. You can do so by fla
   ## Cheating
   If you are playing against your friends and have a serious skill issue, navigate to the game folder, and open it; inside, you will see a file called *high_score.txt*. Double-clicking it will open the file in a text editor (likely notepad for Windows, TextEdit for MacOS and GNOME text editor, Xed or another for Linux). You will see your high score there. Simply change it to your desired score, and flex on your friends
 
-  > [!NOTE] You can also use this to reset the high score to 0.
+> [!NOTE] You can also use this to reset the high score to 0.
 
 ## Doom Mode
  To prevent a huge, unbeatable score, after you beat the previous high score, doom mode will commence, where the pillars will change color to yellow and the music changes. At this point, it is advisable to panic and crash into either:
 - The ground
 - The ceiling
 - A pillar
+
 Since the default high score is set to 0, doom mode will activate once you go through the first pillars.
 
   
