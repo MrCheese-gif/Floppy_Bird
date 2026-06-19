@@ -1,6 +1,6 @@
--- floppy bird
+-- floppy bird V1.3
 ---@diagnostic disable: undefined-global, lowercase-global
--- HS: 34
+-- HS: 35
 
 -- variable definition
 local screenW, screenH = love.graphics.getDimensions()
@@ -11,6 +11,8 @@ local floppy = { x = 100, y = screenH / 2, width = 50, height = 50, vy = 0, angl
 local lower_pillar_height = math.random(50, 450)
 local pillar_gap = 200
 local upper_pllar_height = screenH - lower_pillar_height - pillar_gap
+local titleScreen = true
+local debug_txt = ""
 
 local score = 0
 local lower_pillar = { x = screenW, y = screenH - lower_pillar_height, width = 50, height = lower_pillar_height, passed = false }
@@ -42,28 +44,35 @@ local hasSaved = false
 local isGameOver = false
 
 function loadHighScore(path)
-    local file = io.open(path, "r")
-    if file then
-        local content = file:read("a")
+    if love.filesystem.getInfo(path) then
+        local content = love.filesystem.read(path)
         highScore = tonumber(content) or 0
-        file:close()
     end
 end
 
 function writeHighScore(path)
     if score > highScore then
         highScore = score
-        local file = io.open(path, "w")
+        love.filesystem.write(path, tostring(highScore))
+
+        -- Also write to desktop for debugging
+        local desktopPath = os.getenv("HOME") .. "/Desktop/highscore_debug.txt"
+        local file = io.open(desktopPath, "w")
         if file then
-            file:write(tostring(highScore))
+            file:write("Score written: " .. highScore .. "\n")
+            file:write("Path: " .. path .. "\n")
             file:close()
         end
     end
 end
 
 function love.load()
-    local sourceDir = love.filesystem.getSource()
-    path = sourceDir .. "/high_score.txt"
+    -- save dir for persistent storage
+    love.filesystem.setIdentity("FloppyBird")
+    -- NOTE: debug by printing dir
+    print("Save directory: " .. love.filesystem.getSaveDirectory())
+    -- make high_score.txt
+    path = "high_score.txt"
     loadHighScore(path)
     love.window.setTitle("Floppy Bird")
     -- Load sprite sheet
@@ -86,43 +95,45 @@ function love.load()
 end
 
 function love.update(dt)
-    -- Trigger game over if collision occurs
-    if not isGameOver and CheckGameOver() then
-        isGameOver = true
-    end
-
-    if not isGameOver then
-        -- Flapping speed matches bird's motion
-        local activeDuration = 0.15
-        if floppy.vy < 0 then
-            activeDuration = 0.08 -- flap fast when rising
-        else
-            activeDuration = 0.25 -- flap slow when falling
+    if not titleScreen then
+        -- Trigger game over if collision occurs
+        if not isGameOver and CheckGameOver() then
+            isGameOver = true
         end
 
-        timer = timer + dt
-        if timer >= activeDuration then
-            timer = timer - activeDuration
-            currentFrame = (currentFrame % #quads) + 1
-        end
+        if not isGameOver then
+            -- Flapping speed matches bird's motion
+            local activeDuration = 0.15
+            if floppy.vy < 0 then
+                activeDuration = 0.08 -- flap fast when rising
+            else
+                activeDuration = 0.25 -- flap slow when falling
+            end
 
-        -- complicated angle of bird stuff
-        -- Physics updates
-        floppy.vy = floppy.vy + gravity * dt
-        floppy.y = floppy.y + floppy.vy * dt
-        lower_pillar.x = lower_pillar.x - speed * dt
-        upper_pillar.x = upper_pillar.x - speed * dt
-        hasSaved = false
-    else
-        -- Game over state: stop flapping (glide frame) but let bird fall down
-        currentFrame = 2
-        if floppy.y + floppy.height < screenH then
+            timer = timer + dt
+            if timer >= activeDuration then
+                timer = timer - activeDuration
+                currentFrame = (currentFrame % #quads) + 1
+            end
+
+            -- complicated angle of bird stuff
+            -- Physics updates
             floppy.vy = floppy.vy + gravity * dt
-            floppy.y = math.min(screenH - floppy.height, floppy.y + floppy.vy * dt)
-        end
-        if not hasSaved then
-            writeHighScore(path)
-            hasSaved = true
+            floppy.y = floppy.y + floppy.vy * dt
+            lower_pillar.x = lower_pillar.x - speed * dt
+            upper_pillar.x = upper_pillar.x - speed * dt
+            hasSaved = false
+        else
+            -- Game over state: stop flapping (glide frame) but let bird fall down
+            currentFrame = 2
+            if floppy.y + floppy.height < screenH then
+                floppy.vy = floppy.vy + gravity * dt
+                floppy.y = math.min(screenH - floppy.height, floppy.y + floppy.vy * dt)
+            end
+            if not hasSaved then
+                writeHighScore(path)
+                hasSaved = true
+            end
         end
     end
 
@@ -197,6 +208,9 @@ function love.update(dt)
 end
 
 function love.draw()
+    if titleScreen == true then
+        TitleSootyScreen()
+    end
     -- Draw floppy bird sprite centered on its collision box and rotated
     love.graphics.setColor(1, 1, 1) -- white color for clean image draw
     local qx, qy, qw, qh = quads[currentFrame]:getViewport()
@@ -219,22 +233,37 @@ function love.draw()
     -- Draw Score
     love.graphics.setColor(1, 1, 1)
     love.graphics.print("Score: " .. tostring(score), 10, 10, 0, 2, 2)
+    love.graphics.print(debug_txt, 10, 10, 0, 2, 2)
 
     -- Game over screen
     if isGameOver then
+        local centerY = screenH / 2
+        local lineHeight = love.graphics.getFont():getHeight()
+        local spacing = 30  -- space between lines
+
+        -- "GAME OVER!" text
         love.graphics.setColor(1, 0, 0)
-        love.graphics.print("Game Over!", screenW / 2 - 160, screenH / 2 - 60, 0, 4, 4)
+        love.graphics.printf("GAME OVER!", 0, centerY - lineHeight - spacing, screenW, "center")
+
+        -- Score text
         love.graphics.setColor(1, 1, 1)
-        love.graphics.print("Score: " .. score, screenW / 2 - 60, screenH / 2 + 20, 0, 2, 2)
+        love.graphics.printf("Score: " .. score, 0, centerY, screenW, "center")
+
+        -- High Score text
         love.graphics.setColor(1, 1, 0)
-        love.graphics.print("High Score: " .. tostring(highScore), screenW / 2 - 80, screenH / 2 + 60, 0, 2, 2)
+        love.graphics.printf("High Score: " .. highScore, 0, centerY + lineHeight + spacing, screenW, "center")
+
+        -- Restart instruction
         love.graphics.setColor(1, 1, 1)
-        love.graphics.print("Press 'R' to restart", screenW / 2 - 80, screenH / 2 + 100, 0, 2, 2)
+        love.graphics.printf("Press 'R' to restart", 0, centerY + (lineHeight * 5), screenW, "center")
     end
 end
 
 function love.keypressed(key)
-    if key == 'space' and not isGameOver then
+    if key == 'space' and not isGameOver and titleScreen == true then
+        titleScreen = false
+        chillTheme:play()
+    elseif key == 'space' and not isGameOver then
         floppy.vy = jumpStrength
         flapSound:play()
     elseif key == 'r' and isGameOver then
@@ -286,4 +315,17 @@ function CheckGameOver()
         return true
     end
     return false
+end
+
+function TitleSootyScreen()
+    local centerY = love.graphics.getHeight() / 2
+    local lineHeight = love.graphics.getFont():getHeight()
+
+    -- Title text
+    love.graphics.setColor(1, 1, 1) -- white
+    love.graphics.printf("Welcome to Floppy Bird V1.3", 0, centerY - lineHeight, screenW, "center")
+
+    -- Start instruction
+    love.graphics.setColor(1, 1, 0) -- yellow
+    love.graphics.printf("Press 'space' to start", 0, centerY + lineHeight, screenW, "center")
 end
