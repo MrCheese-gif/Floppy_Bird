@@ -131,7 +131,7 @@ function love.update(dt)
                 floppy.y = math.min(screenH - floppy.height, floppy.y + floppy.vy * dt)
             end
             if not hasSaved then
-                assert(writeHighScore(path))
+                writeHighScore(path)
                 hasSaved = true
             end
         end
@@ -251,7 +251,7 @@ function love.draw()
 
         -- High Score text
         love.graphics.setColor(1, 1, 0)
-        love.graphics.printf("High Score: " .. score, 0, centerY + lineHeight + spacing, screenW, "center")
+        love.graphics.printf("High Score: " .. highScore, 0, centerY + lineHeight + spacing, screenW, "center")
 
         -- Restart instruction
         love.graphics.setColor(1, 1, 1)
@@ -323,7 +323,7 @@ function TitleSootyScreen()
 
     -- Title text
     love.graphics.setColor(1, 1, 1) -- white
-    love.graphics.printf("Welcome to Floppy Bird V1.2", 0, centerY - lineHeight, screenW, "center")
+    love.graphics.printf("Welcome to Floppy Bird V1.3", 0, centerY - lineHeight, screenW, "center")
 
     -- Start instruction
     love.graphics.setColor(1, 1, 0) -- yellow
