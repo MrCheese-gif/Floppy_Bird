@@ -50,9 +50,9 @@ You are a bird, and you have to go between the green poles. You can do so by fla
 
 ### Controls
 
-- Press `spacebar` to jump/flap
+- Press <kbd>spacebar</kbd> to jump/flap
   
-- Press the `R` key to restart after you have died
+- Press the <kbd>R</kbd> key to restart after you have died
   
 
 ## ~~Cheating~~ Changing the high score
