@@ -3,6 +3,7 @@
 -- HS: 35
 
 -- variable definition
+local gameVersion = 1.4
 local screenW, screenH = love.graphics.getDimensions()
 local speed = 220
 local gravity = 900
@@ -125,87 +126,88 @@ function love.update(dt)
                 hasSaved = true
             end
         end
+        -- complicated stuff
+        -- Smoothly interpolate rotation angle based on vertical velocity
+        local targetAngle = 0
+        if floppy.vy < 0 then
+            targetAngle = -0.4 -- Point slightly up when jumping
+        else
+            -- Map falling speed to a downward angle (max 1.2 radians ~ 70 degrees)
+            targetAngle = math.min(1.2, (floppy.vy / 600) * 1.2)
+        end
+        floppy.angle = floppy.angle + (targetAngle - floppy.angle) * 8 * dt
+        -- End of complicated stuff
+
+        -- score stuff
+        if lower_pillar.x + lower_pillar.width < 0 then
+            lower_pillar.x = screenW
+            upper_pillar.x = screenW
+            lower_pillar_height = math.random(50, 400)
+            upper_pllar_height = screenH - lower_pillar_height - pillar_gap
+            lower_pillar.height = lower_pillar_height
+            lower_pillar.y = screenH - lower_pillar_height
+            upper_pillar.height = upper_pllar_height
+            lower_pillar.passed = false
+        end
+
+        if not lower_pillar.passed and HasPassedPillars(floppy, lower_pillar) then
+            lower_pillar.passed = true
+            score = score + 1
+        end
+        -- hard mode
+        if score > highScore then
+            hardMode = true
+        end
+
+        if hardMode == true and not CheckGameOver() then
+            chillTheme:stop()
+            doomTheme:play()
+            speed = 250
+            pillar_gap = 175
+            doomTimer = doomTimer + dt
+            love.window.setTitle("Floppy death")
+            if doomTimer >= 10 then
+                speed = 350
+                pillar_gap = 160
+                speed = speed + dt
+                love.window.setTitle("DOOOM")
+            end
+        elseif CheckGameOver() then
+            chillTheme:stop()
+            doomTheme:stop()
+            doomTimer = 0
+        end
+        -- play sound if score is a multiple of 5
+        if score % 5 == 0 and score ~= 0 and soundLock == false then
+            pointSound:play()
+            soundLock = true
+        end
+
+        if score % 5 ~= 0 then
+            soundLock = false
+        end
+
+        -- win sound
+        if score >= highScore and isGameOver == true and winSoundLock == false then
+            winSound:play()
+            winSoundLock = true
+        elseif score < highScore and isGameOver == true and loseSoundLock == false then
+            loseSound:play()
+            loseSoundLock = true
+        end
 
     elseif paused then
         doomTheme:pause()
         chillTheme:pause()
-    end
-
-
-
-    -- Smoothly interpolate rotation angle based on vertical velocity
-    local targetAngle = 0
-    if floppy.vy < 0 then
-        targetAngle = -0.4 -- Point slightly up when jumping
-    else
-        -- Map falling speed to a downward angle (max 1.2 radians ~ 70 degrees)
-        targetAngle = math.min(1.2, (floppy.vy / 600) * 1.2)
-    end
-    floppy.angle = floppy.angle + (targetAngle - floppy.angle) * 8 * dt
-    -- End of complicated stuff
-
-    -- score stuff
-    if lower_pillar.x + lower_pillar.width < 0 then
-        lower_pillar.x = screenW
-        upper_pillar.x = screenW
-        lower_pillar_height = math.random(50, 400)
-        upper_pllar_height = screenH - lower_pillar_height - pillar_gap
-        lower_pillar.height = lower_pillar_height
-        lower_pillar.y = screenH - lower_pillar_height
-        upper_pillar.height = upper_pllar_height
-        lower_pillar.passed = false
-    end
-
-    if not lower_pillar.passed and HasPassedPillars(floppy, lower_pillar) then
-        lower_pillar.passed = true
-        score = score + 1
-    end
-    -- hard mode
-    if score > highScore then
-        hardMode = true
-    end
-
-    if hardMode == true and not CheckGameOver() then
-        chillTheme:stop()
-        doomTheme:play()
-        speed = 250
-        pillar_gap = 175
-        doomTimer = doomTimer + dt
-        love.window.setTitle("Floppy death")
-        if doomTimer >= 10 then
-            speed = 350
-            pillar_gap = 160
-            speed = speed + dt
-            love.window.setTitle("DOOOM")
-        end
-    elseif CheckGameOver() then
-        chillTheme:stop()
-        doomTheme:stop()
-        doomTimer = 0
-    end
-    -- play sound if score is a multiple of 5
-    if score % 5 == 0 and score ~= 0 and soundLock == false then
-        pointSound:play()
-        soundLock = true
-    end
-
-    if score % 5 ~= 0 then
-        soundLock = false
-    end
-
-    -- win sound
-    if score >= highScore and isGameOver == true and winSoundLock == false then
-        winSound:play()
-        winSoundLock = true
-    elseif score < highScore and isGameOver == true and loseSoundLock == false then
-        loseSound:play()
-        loseSoundLock = true
     end
 end
 
 function love.draw()
     if titleScreen == true then
         TitleSootyScreen()
+    end
+    if paused == true then
+        PauseScreen()
     end
     -- Draw floppy bird sprite centered on its collision box and rotated
     love.graphics.setColor(1, 1, 1) -- white color for clean image draw
@@ -327,9 +329,20 @@ function TitleSootyScreen()
 
     -- Title text
     love.graphics.setColor(1, 1, 1) -- white
-    love.graphics.printf("Welcome to Floppy Bird V1.3", 0, centerY - lineHeight, screenW, "center")
+    love.graphics.printf("Welcome to Floppy Bird"..gameVersion, 0, centerY - lineHeight, screenW, "center")
 
     -- Start instruction
     love.graphics.setColor(1, 1, 0) -- yellow
     love.graphics.printf("Press 'space' to start", 0, centerY + lineHeight, screenW, "center")
+end
+
+function PauseScreen()
+    local centerY   = love.graphics.getHeight() / 2          -- vertical centre of the screen
+    local lineHeight = love.graphics.getFont():getHeight()   -- height of the current font
+    -- Compute a y‑coordinate that keeps the text fully visible.
+    -- We place the *top* of the text a little above the centre.
+    local y = centerY - lineHeight / 2
+    love.graphics.setColor(1, 1, 1)                         -- white
+    -- Use the real screen width for the max‑width argument.
+    love.graphics.printf("Game Paused. Press P to resume.", 0, y, love.graphics.getWidth(), "center")
 end
