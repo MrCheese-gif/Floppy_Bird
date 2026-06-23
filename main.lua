@@ -12,6 +12,7 @@ local lower_pillar_height = math.random(50, 450)
 local pillar_gap = 200
 local upper_pllar_height = screenH - lower_pillar_height - pillar_gap
 local titleScreen = true
+local paused = false
 
 local score = 0
 local lower_pillar = { x = screenW, y = screenH - lower_pillar_height, width = 50, height = lower_pillar_height, passed = false }
@@ -84,7 +85,7 @@ function love.load()
 end
 
 function love.update(dt)
-    if not titleScreen then
+    if not titleScreen and not paused then
         -- Trigger game over if collision occurs
         if not isGameOver and CheckGameOver() then
             isGameOver = true
@@ -124,7 +125,13 @@ function love.update(dt)
                 hasSaved = true
             end
         end
+
+    elseif paused then
+        doomTheme:pause()
+        chillTheme:pause()
     end
+
+
 
     -- Smoothly interpolate rotation angle based on vertical velocity
     local targetAngle = 0
@@ -222,7 +229,6 @@ function love.draw()
     -- Draw Score
     love.graphics.setColor(1, 1, 1)
     love.graphics.print("Score: " .. tostring(score), 10, 10, 0, 2, 2)
-    love.graphics.print(debug_txt, 10, 10, 0, 2, 2)
 
     -- Game over screen
     if isGameOver then
@@ -249,12 +255,20 @@ function love.draw()
 end
 
 function love.keypressed(key)
-    if key == 'space' and not isGameOver and titleScreen == true then
+    if key == 'space' and not isGameOver and titleScreen then
         titleScreen = false
         chillTheme:play()
-    elseif key == 'space' and not isGameOver then
+    elseif key == 'space' and not isGameOver and not paused then
         floppy.vy = jumpStrength
         flapSound:play()
+    elseif key == 'p' and not paused and not titleScreen then
+        paused = true
+    elseif key == 'p' and paused and not titleScreen and not hardMode then
+        paused = false
+        chillTheme:play()
+    elseif key == 'p' and paused and not titleScreen and hardMode then
+            paused = false
+            doomTheme:play()
     elseif key == 'r' and isGameOver then
         floppy.y = screenH / 2
         floppy.x = 100
@@ -285,6 +299,7 @@ function love.keypressed(key)
         love.window.setTitle("Floppy Bird")
     end
 end
+
 
 function CheckCollision(x1, y1, w1, h1, x2, y2, w2, h2)
     return x1 < x2 + w2 and
