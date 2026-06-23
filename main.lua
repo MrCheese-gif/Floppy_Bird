@@ -12,7 +12,6 @@ local lower_pillar_height = math.random(50, 450)
 local pillar_gap = 200
 local upper_pllar_height = screenH - lower_pillar_height - pillar_gap
 local titleScreen = true
-local debug_txt = ""
 
 local score = 0
 local lower_pillar = { x = screenW, y = screenH - lower_pillar_height, width = 50, height = lower_pillar_height, passed = false }
@@ -55,22 +54,12 @@ function writeHighScore(path)
         highScore = score
         love.filesystem.write(path, tostring(highScore))
 
-        -- Also write to desktop for debugging
-        local desktopPath = os.getenv("HOME") .. "/Desktop/highscore_debug.txt"
-        local file = io.open(desktopPath, "w")
-        if file then
-            file:write("Score written: " .. highScore .. "\n")
-            file:write("Path: " .. path .. "\n")
-            file:close()
-        end
     end
 end
 
 function love.load()
     -- save dir for persistent storage
     love.filesystem.setIdentity("FloppyBird")
-    -- NOTE: debug by printing dir
-    print("Save directory: " .. love.filesystem.getSaveDirectory())
     -- make high_score.txt
     path = "high_score.txt"
     loadHighScore(path)
