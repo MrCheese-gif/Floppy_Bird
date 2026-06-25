@@ -11,13 +11,13 @@ local jumpStrength = -330
 local floppy = { x = 100, y = screenH / 2, width = 50, height = 50, vy = 0, angle = 0 }
 local lower_pillar_height = math.random(50, 450)
 local pillar_gap = 200
-local upper_pllar_height = screenH - lower_pillar_height - pillar_gap
+local upper_pillar_height = screenH - lower_pillar_height - pillar_gap
 local titleScreen = true
 local paused = false
 
 local score = 0
 local lower_pillar = { x = screenW, y = screenH - lower_pillar_height, width = 50, height = lower_pillar_height, passed = false }
-local upper_pillar = { x = screenW, y = 0, width = 50, height = upper_pllar_height }
+local upper_pillar = { x = screenW, y = 0, width = 50, height = upper_pillar_height }
 local hardMode = false
 local doomTimer = 0
 

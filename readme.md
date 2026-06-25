@@ -2,13 +2,31 @@
 
 # Change log
 
-**20-6-2026**
+### Version 1.4
+
+- Added the ability to pause mid-game when pressing the <kbd>P</kbd> key.
+
+### Version 1.3
+
+- Used `love.filesystem` instead of `io.read` to let the game run on web using [Love WebBuilder](https://schellingb.github.io/LoveWebBuilder/package), however, it does not work on WebBuilder yet.
+
+- Due to this, the location of high_score.txt has changed
+
+#### Bug Fixes
+
+- Fixed an error where if `high_score.txt` does not exist, highscore doesn't persist.
+
+- Fixed an error where game blue screens on death.
+
+### Version 1.2
 
 - Added a title screen to the game
 
 - Horizontally centered all text that appears in the 'Game Over' state
 
+#### Bug Fixes
 
+- N/A: No bugs found
 
 This project was coded in [Lua](www.lua.org). It uses [LÖVE2D](www.love2d.org) as the game engine. 
 
@@ -30,15 +48,38 @@ You are a bird, and you have to go between the green poles. You can do so by fla
 
 ### Controls
 
-- Press ==spacebar== to jump
+- Press <kbd>space</kbd> to jump
 
-- Press the ==R== key to restart after you have died
-  
-  ## Cheating
-  
-  If you are playing against your friends and have a serious skill issue, navigate to the game folder, and open it; inside, you will see a file called *high_score.txt*. Double-clicking it will open the file in a text editor (likely notepad for Windows, TextEdit for MacOS and GNOME text editor, Xed or another for Linux). You will see your high score there. Simply change it to your desired score, and flex on your friends
-  
-  > [!NOTE] You can also use this to reset the high score to 0.
+- Press the <kbd>R</kbd> key to restart after you have died
+
+- Press the <kbd>P</kbd> key to pause mid-game
+
+## ~~Cheating~~ Changing the high score
+
+If you are playing against your friends and have a serious skill issue, open Terminal and type:
+
+**MacOS:** 
+
+```bash
+nano ~/Library/Application\ Support/LOVE/FloppyBird/high_score.txt
+```
+
+**Windows:** 
+
+```bash
+cd C:\Users\YourUsername\AppData\Roaming\LOVE\FloppyBird
+nano high_score.txt
+```
+
+**Linux:** 
+
+```bash
+nano ~/.local/share/love/FloppyBird/high_score.txt
+```
+
+You will see your high score there. Simply change it to your desired score, press `ctrl + O` to save and then `ctrl + X` to exit and flex on your friends.
+
+> [!NOTE] You can also use this to reset the high score to 0.
 
 ## Doom Mode
 
@@ -47,4 +88,9 @@ You are a bird, and you have to go between the green poles. You can do so by fla
 - The ground
 - The ceiling
 - A pillar
-  Since the default high score is set to 0, doom mode will activate once you go through the first pillars.
+
+> Since the default high score is set to 0, doom mode will activate once you go through the first pillars on your first run.
+
+# Bugs
+
+The game does not work on WebBuilder. We are aware of that and hope to fix it as soon as possible.
