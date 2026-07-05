@@ -1,59 +1,24 @@
 # READ ME
 
-⚠️WARNING: This game is the local version of *Floppy bird* and hence does not work on the web using WebBuilder.
+> ⚠️WARNING: This game is the Web Edition of *floppy bird* .
+
+Original game: [Floppy Bird](https://github.com/MrCheese-gif/Floppy_Bird)
 
 # Change log
 
-### Version 1.4
+### Version 1 WE
 
 - Added the ability to pause mid-game when pressing the <kbd>P</kbd> key.
-  
-- Added nil-checkers to the music and sound effects, so that if a sound asset is missing, the game won't crash.
-  
-- Added more bugs to fix later
-  
-- Added more fixes to bug later
 
-#### Bug Fixes
+**This project was coded in [Lua](https://www.lua.org). It uses [LÖVE2D](https://www.love2d.org) as the game engine and [Love WebBuilder](https://schellingb.github.io/LoveWebBuilder/package) to package the game.**
 
-- Fixed a bug where bird keeps spinning after death
+## Note
 
-### Version 1.3
-
-- Used `love.filesystem` instead of `io.read` to let the game run on web using [Love WebBuilder](https://schellingb.github.io/LoveWebBuilder/package), however, **this version does not work on WebBuilder**. To get the version that works on WebBuilder, click [here](https://www.placeholder.com)
-
-- Due to this, the location of `high_score.txt` has changed
-
-#### Bug Fixes
-
-- Fixed an error where if `high_score.txt` does not exist, the highscore doesn't persist.
-
-- Fixed an error where game blue screens on death.
-
-### Version 1.2
-
-- Added a title screen to the game
-
-- Horizontally centered all text that appears in the 'Game Over' state
-
-#### Bug Fixes
-
-- N/A: No bugs found
-
----
-
-This project was coded in [Lua](www.lua.org). It uses [LÖVE2D](www.love2d.org) as the game engine. 
-
-## Requirements
-
-- Lua
-- LÖVE2D
-
-**To download the requirements, click [here for Lua](www.lua.org) and [here for LÖVE](www.love2d.org)**
+To make it run on the web, I have had to strip down a lot of things. This means that there is no background music in the game, only sound effects, and everything is going to be very compressed. For the best experience, it is recommended that you just play the original version. The web version is still not mature so you should expect bugs. This version works on both web and with the LÖVE2D app, however, it is recommended you use the [original version](https://github.com/MrCheese-gif/Floppy_Bird) for the latter
 
 ## Instructions
 
-To run the game, first download the code as a `.zip` file from my GitHub page (pres the green button that says `Code`, and then click `download as zip`), then [unzip](https://www.ezyzip.com/unzip-files-online.html) the folder. Then, download LÖVE2D from their website. After you have done that, drag the folder you just unzipped onto the LÖVE2D icon. Immediately, a game window will pop up, and you will be able to play 'floppy bird'. You must do this every time you want to play.
+To run the game, first download the code as a `.zip` file from my GitHub page, then [unzip](https://www.ezyzip.com/unzip-files-online.html) the folder. Then, select the files inside the folder, go to the LOVE WebBuilder website, click 'run' to run once or 'build' to download as HTML, and drop in the files. Alternatively, you can also just download the ready HTML file and double click it in the File Explorer/ Finder to run it in your default browser.
 
 ## How to Play
 
@@ -70,34 +35,11 @@ You are a bird, and you have to go between the green poles. You can do so by fla
 
 ## ~~Cheating~~ Changing the high score
 
-If you are playing against your friends and have a serious skill issue, open Terminal and type:
-
-**MacOS:** 
-
-```bash
-nano ~/Library/Application\ Support/LOVE/FloppyBird/high_score.txt
-```
-
-**Windows:** 
-
-```bash
-cd C:\Users\YourUsername\AppData\Roaming\LOVE\FloppyBird
-nano high_score.txt
-```
-
-**Linux:** 
-
-```bash
-nano ~/.local/share/love/FloppyBird/high_score.txt
-```
-
-You will see your high score there. Simply change it to your desired score, press `ctrl + O` to save and then `ctrl + X` to exit and flex on your friends.
-
-> [!NOTE] You can also use this to reset the high score to 0.
+Unlike the local version, this version does not support changing the high score. The high score will also not persist if you reload the page.
 
 ## Doom Mode
 
- To prevent a huge, unbeatable score, after you beat the previous high score, doom mode will commence, where the pillars will change color to yellow and the music changes. At this point, it is advisable to panic and crash into either:
+To prevent a huge, unbeatable score, after you beat the previous high score, doom mode will commence, where the pillars will change color to yellow. At this point, it is advisable to panic and crash into either:
 
 - The ground
 - The ceiling
@@ -106,5 +48,9 @@ You will see your high score there. Simply change it to your desired score, pres
 > Since the default high score is set to 0, doom mode will activate once you go through the first pillars on your first run.
 
 # Bugs
+
+There is a very specific bug where if the high score is 0 and you immediately crash without going past the first pillar, the game will blue screen and crash. We are unaware of what is causing this bug, but you can be sure that we are trying to fix it.
+
+
 
 > To report bugs or request features, email alrisdhanwani@protonmail.com
