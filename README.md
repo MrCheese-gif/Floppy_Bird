@@ -20,7 +20,7 @@
 
 ### Version 1.3
 
-- Used `love.filesystem` instead of `io.read` to let the game run on web using [Love WebBuilder](https://schellingb.github.io/LoveWebBuilder/package), however, **this version does not work on WebBuilder**. To get the version that works on WebBuilder, click [here](https://www.placeholder.com)
+- Used `love.filesystem` instead of `io.read` to let the game run on web using [Love WebBuilder](https://schellingb.github.io/LoveWebBuilder/package), however, **this version does not work on WebBuilder**. To get the version that works on WebBuilder, click [here](This project was coded in [Lua](www.lua.org). It uses [LÖVE2D](https://www.love2d.org) as the game engine. )
 
 - Due to this, the location of `high_score.txt` has changed
 
@@ -42,7 +42,7 @@
 
 ---
 
-This project was coded in [Lua](www.lua.org). It uses [LÖVE2D](www.love2d.org) as the game engine. 
+This project was coded in [Lua](www.lua.org). It uses [LÖVE2D](https://www.love2d.org) as the game engine. 
 
 ## Requirements
 
