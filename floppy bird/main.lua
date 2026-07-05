@@ -1,8 +1,8 @@
--- floppy bird V1.3
+-- floppy bird
 ---@diagnostic disable: undefined-global, lowercase-global
 -- HS: 35
-
 -- variable definition
+local gameVersion = 1.4
 local screenW, screenH = love.graphics.getDimensions()
 local speed = 220
 local gravity = 900
@@ -10,13 +10,13 @@ local jumpStrength = -330
 local floppy = { x = 100, y = screenH / 2, width = 50, height = 50, vy = 0, angle = 0 }
 local lower_pillar_height = math.random(50, 450)
 local pillar_gap = 200
-local upper_pllar_height = screenH - lower_pillar_height - pillar_gap
+local upper_pillar_height = screenH - lower_pillar_height - pillar_gap
 local titleScreen = true
-local debug_txt = ""
+local paused = false
 
 local score = 0
 local lower_pillar = { x = screenW, y = screenH - lower_pillar_height, width = 50, height = lower_pillar_height, passed = false }
-local upper_pillar = { x = screenW, y = 0, width = 50, height = upper_pllar_height }
+local upper_pillar = { x = screenW, y = 0, width = 50, height = upper_pillar_height }
 local hardMode = false
 local doomTimer = 0
 
@@ -30,10 +30,14 @@ local loseSound = love.audio.newSource("gameOver.mp3", "static")
 local flapSound = love.audio.newSource("flap.mp3", "static")
 local chillTheme = love.audio.newSource("BGmusic.mp3", "stream")
 local doomTheme = love.audio.newSource("DOOM.mp3", "stream")
-chillTheme:setLooping(true)
-doomTheme:setLooping(true)
+if chillTheme then 
+  chillTheme:setLooping(true) 
+end
 chillTheme:setVolume(0.2)
+if doomTheme then
+doomTheme:setLooping(true)
 doomTheme:setVolume(0.5)
+end
 
 
 -- FUNCY FUNCTIONS
@@ -55,22 +59,12 @@ function writeHighScore(path)
         highScore = score
         love.filesystem.write(path, tostring(highScore))
 
-        -- Also write to desktop for debugging
-        local desktopPath = os.getenv("HOME") .. "/Desktop/highscore_debug.txt"
-        local file = io.open(desktopPath, "w")
-        if file then
-            file:write("Score written: " .. highScore .. "\n")
-            file:write("Path: " .. path .. "\n")
-            file:close()
-        end
     end
 end
 
 function love.load()
     -- save dir for persistent storage
     love.filesystem.setIdentity("FloppyBird")
-    -- NOTE: debug by printing dir
-    print("Save directory: " .. love.filesystem.getSaveDirectory())
     -- make high_score.txt
     path = "high_score.txt"
     loadHighScore(path)
@@ -91,11 +85,11 @@ function love.load()
     timer = 0
 
     -- sound
-    chillTheme:play()
+    if chillTheme then chillTheme:play() end
 end
 
 function love.update(dt)
-    if not titleScreen then
+    if not titleScreen and not paused then
         -- Trigger game over if collision occurs
         if not isGameOver and CheckGameOver() then
             isGameOver = true
@@ -135,81 +129,88 @@ function love.update(dt)
                 hasSaved = true
             end
         end
-    end
-
-    -- Smoothly interpolate rotation angle based on vertical velocity
-    local targetAngle = 0
-    if floppy.vy < 0 then
-        targetAngle = -0.4 -- Point slightly up when jumping
-    else
-        -- Map falling speed to a downward angle (max 1.2 radians ~ 70 degrees)
-        targetAngle = math.min(1.2, (floppy.vy / 600) * 1.2)
-    end
-    floppy.angle = floppy.angle + (targetAngle - floppy.angle) * 8 * dt
-    -- End of complicated stuff
-
-    -- score stuff
-    if lower_pillar.x + lower_pillar.width < 0 then
-        lower_pillar.x = screenW
-        upper_pillar.x = screenW
-        lower_pillar_height = math.random(50, 400)
-        upper_pllar_height = screenH - lower_pillar_height - pillar_gap
-        lower_pillar.height = lower_pillar_height
-        lower_pillar.y = screenH - lower_pillar_height
-        upper_pillar.height = upper_pllar_height
-        lower_pillar.passed = false
-    end
-
-    if not lower_pillar.passed and HasPassedPillars(floppy, lower_pillar) then
-        lower_pillar.passed = true
-        score = score + 1
-    end
-    -- hard mode
-    if score > highScore then
-        hardMode = true
-    end
-
-    if hardMode == true and not CheckGameOver() then
-        chillTheme:stop()
-        doomTheme:play()
-        speed = 250
-        pillar_gap = 175
-        doomTimer = doomTimer + dt
-        love.window.setTitle("Floppy death")
-        if doomTimer >= 10 then
-            speed = 350
-            pillar_gap = 160
-            speed = speed + dt
-            love.window.setTitle("DOOOM")
+        -- complicated stuff
+        -- Smoothly interpolate rotation angle based on vertical velocity
+        local targetAngle = 0
+        if floppy.vy < 0 then
+            targetAngle = -0.4 -- Point slightly up when jumping
+        else
+            -- Map falling speed to a downward angle (max 1.2 radians ~ 70 degrees)
+            targetAngle = math.min(1.2, (floppy.vy / 600) * 1.2)
         end
-    elseif CheckGameOver() then
-        chillTheme:stop()
-        doomTheme:stop()
-        doomTimer = 0
-    end
-    -- play sound if score is a multiple of 5
-    if score % 5 == 0 and score ~= 0 and soundLock == false then
-        pointSound:play()
-        soundLock = true
-    end
+        floppy.angle = floppy.angle + (targetAngle - floppy.angle) * 8 * dt
+        -- End of complicated stuff
 
-    if score % 5 ~= 0 then
-        soundLock = false
-    end
+        -- score stuff
+        if lower_pillar.x + lower_pillar.width < 0 then
+            lower_pillar.x = screenW
+            upper_pillar.x = screenW
+            lower_pillar_height = math.random(50, 400)
+            upper_pllar_height = screenH - lower_pillar_height - pillar_gap
+            lower_pillar.height = lower_pillar_height
+            lower_pillar.y = screenH - lower_pillar_height
+            upper_pillar.height = upper_pllar_height
+            lower_pillar.passed = false
+        end
 
-    -- win sound
-    if score >= highScore and isGameOver == true and winSoundLock == false then
-        winSound:play()
-        winSoundLock = true
-    elseif score < highScore and isGameOver == true and loseSoundLock == false then
-        loseSound:play()
-        loseSoundLock = true
+        if not lower_pillar.passed and HasPassedPillars(floppy, lower_pillar) then
+            lower_pillar.passed = true
+            score = score + 1
+        end
+        -- hard mode
+        if score > highScore then
+            hardMode = true
+        end
+
+        if hardMode == true and not CheckGameOver() then
+            if chillTheme then chillTheme:stop() end
+            if doomTheme then doomTheme:play() end
+            speed = 250
+            pillar_gap = 175
+            doomTimer = doomTimer + dt
+            love.window.setTitle("Floppy death")
+            if doomTimer >= 10 then
+                speed = 350
+                pillar_gap = 160
+                speed = speed + dt
+                love.window.setTitle("DOOOM")
+            end
+        elseif CheckGameOver() then
+            if chillTheme then chillTheme:stop() end
+            if doomTheme then doomTheme:stop() end
+            doomTimer = 0
+        end
+        -- play sound if score is a multiple of 5
+        if score % 5 == 0 and score ~= 0 and soundLock == false then
+            if pointSound then pointSound:play() end
+            soundLock = true
+        end
+
+        if score % 5 ~= 0 then
+            soundLock = false
+        end
+
+        -- win sound
+        if score >= highScore and isGameOver == true and winSoundLock == false then
+            if winSound then winSound:play() end
+            winSoundLock = true
+        elseif score < highScore and isGameOver == true and loseSoundLock == false then
+            if loseSound then loseSound:play() end
+            loseSoundLock = true
+        end
+
+    elseif paused then
+        if doomTheme then doomTheme:pause() end
+        if chillTheme then chillTheme:pause() end
     end
 end
 
 function love.draw()
     if titleScreen == true then
         TitleSootyScreen()
+    end
+    if paused == true then
+        PauseScreen()
     end
     -- Draw floppy bird sprite centered on its collision box and rotated
     love.graphics.setColor(1, 1, 1) -- white color for clean image draw
@@ -233,7 +234,6 @@ function love.draw()
     -- Draw Score
     love.graphics.setColor(1, 1, 1)
     love.graphics.print("Score: " .. tostring(score), 10, 10, 0, 2, 2)
-    love.graphics.print(debug_txt, 10, 10, 0, 2, 2)
 
     -- Game over screen
     if isGameOver then
@@ -260,12 +260,20 @@ function love.draw()
 end
 
 function love.keypressed(key)
-    if key == 'space' and not isGameOver and titleScreen == true then
+    if key == 'space' and not isGameOver and titleScreen then
         titleScreen = false
-        chillTheme:play()
-    elseif key == 'space' and not isGameOver then
+        if chillTheme then chillTheme:play() end
+    elseif key == 'space' and not isGameOver and not paused then
         floppy.vy = jumpStrength
-        flapSound:play()
+        if flapSound then flapSound:play() end
+    elseif key == 'p' and not paused and not titleScreen and not gameOver then
+        paused = true
+    elseif key == 'p' and paused and not titleScreen and not hardMode and not gameOver then
+        paused = false
+        if chillTheme then chillTheme:play() end
+    elseif key == 'p' and paused and not titleScreen and hardMode and not gameOver then
+            paused = false
+            if doomTheme then doomTheme:play() end
     elseif key == 'r' and isGameOver then
         floppy.y = screenH / 2
         floppy.x = 100
@@ -285,17 +293,20 @@ function love.keypressed(key)
         winSoundLock = false
         loseSoundLock = false
         soundLock = false
-        flapSound:stop()
-        winSound:stop()
-        loseSound:stop()
-        pointSound:stop()
-        hardMode = false
+        if flapSound and winSound and loseSound and pointSound then
+            flapSound:stop()
+            winSound:stop()
+            loseSound:stop()
+            pointSound:stop()
+            hardMode = false
+        end
         speed = 220
         pillar_gap = 200
-        chillTheme:play()
+        if chillTheme then chillTheme:play() end
         love.window.setTitle("Floppy Bird")
     end
 end
+
 
 function CheckCollision(x1, y1, w1, h1, x2, y2, w2, h2)
     return x1 < x2 + w2 and
@@ -323,9 +334,20 @@ function TitleSootyScreen()
 
     -- Title text
     love.graphics.setColor(1, 1, 1) -- white
-    love.graphics.printf("Welcome to Floppy Bird V1.3", 0, centerY - lineHeight, screenW, "center")
+    love.graphics.printf("Welcome to Floppy Bird"..gameVersion, 0, centerY - lineHeight, screenW, "center")
 
     -- Start instruction
     love.graphics.setColor(1, 1, 0) -- yellow
     love.graphics.printf("Press 'space' to start", 0, centerY + lineHeight, screenW, "center")
+end
+
+function PauseScreen()
+    local centerY   = love.graphics.getHeight() / 2          -- vertical centre of the screen
+    local lineHeight = love.graphics.getFont():getHeight()   -- height of the current font
+    -- Compute a y‑coordinate that keeps the text fully visible.
+    -- We place the *top* of the text a little above the centre.
+    local y = centerY - lineHeight / 2
+    love.graphics.setColor(1, 1, 1)                         -- white
+    -- Use the real screen width for the max‑width argument.
+    love.graphics.printf("Game Paused. Press P to resume.", 0, y, love.graphics.getWidth(), "center")
 end
