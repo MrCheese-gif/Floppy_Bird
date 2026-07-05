@@ -7,8 +7,11 @@
 ### Version 1.4
 
 - Added the ability to pause mid-game when pressing the <kbd>P</kbd> key.
+  
 - Added nil-checkers to the music and sound effects, so that if a sound asset is missing, the game won't crash.
+  
 - Added more bugs to fix later
+  
 - Added more fixes to bug later
 
 #### Bug Fixes
