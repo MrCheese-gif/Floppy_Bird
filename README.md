@@ -9,6 +9,38 @@ Original game: [Floppy Bird](https://github.com/MrCheese-gif/Floppy_Bird)
 ### Version 1 WE
 
 - Added the ability to pause mid-game when pressing the <kbd>P</kbd> key.
+  
+- Added nil-checkers to the music and sound effects, so that if a sound asset is missing, the game won't crash.
+  
+- Added more bugs to fix later
+  
+- Added more fixes to bug later
+
+#### Bug Fixes
+
+- Fixed a bug where bird keeps spinning after death
+
+### Version 1.3
+
+- Used `love.filesystem` instead of `io.read` to let the game run on web using [Love WebBuilder](https://schellingb.github.io/LoveWebBuilder/package), however, **this version does not work on WebBuilder**. To get the version that works on WebBuilder, click [here](This project was coded in [Lua](www.lua.org). It uses [LÖVE2D](https://www.love2d.org) as the game engine. )
+
+- Due to this, the location of `high_score.txt` has changed
+
+#### Bug Fixes
+
+- Fixed an error where if `high_score.txt` does not exist, the highscore doesn't persist.
+
+- Fixed an error where game blue screens on death.
+
+### Version 1.2
+
+- Added a title screen to the game
+
+- Horizontally centered all text that appears in the 'Game Over' state
+
+#### Bug Fixes
+
+- N/A: No bugs found
 
 **This project was coded in [Lua](https://www.lua.org). It uses [LÖVE2D](https://www.love2d.org) as the game engine and [Love WebBuilder](https://schellingb.github.io/LoveWebBuilder/package) to package the game.**
 
