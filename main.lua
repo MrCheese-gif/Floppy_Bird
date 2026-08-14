@@ -1,7 +1,7 @@
 -- floppy bird
 ---@diagnostic disable: undefined-global, lowercase-global
 -- HS: 35
-
+-- TODO : ooz goooz
 -- variable definition
 local gameVersion = 1.4
 local screenW, screenH = love.graphics.getDimensions()
@@ -31,10 +31,14 @@ local loseSound = love.audio.newSource("gameOver.mp3", "static")
 local flapSound = love.audio.newSource("flap.mp3", "static")
 local chillTheme = love.audio.newSource("BGmusic.mp3", "stream")
 local doomTheme = love.audio.newSource("DOOM.mp3", "stream")
-chillTheme:setLooping(true)
-doomTheme:setLooping(true)
+if chillTheme then 
+  chillTheme:setLooping(true) 
+end
 chillTheme:setVolume(0.2)
+if doomTheme then
+doomTheme:setLooping(true)
 doomTheme:setVolume(0.5)
+end
 
 
 -- FUNCY FUNCTIONS
@@ -82,7 +86,7 @@ function love.load()
     timer = 0
 
     -- sound
-    chillTheme:play()
+    if chillTheme then chillTheme:play() end
 end
 
 function love.update(dt)
@@ -143,10 +147,10 @@ function love.update(dt)
             lower_pillar.x = screenW
             upper_pillar.x = screenW
             lower_pillar_height = math.random(50, 400)
-            upper_pllar_height = screenH - lower_pillar_height - pillar_gap
+            upper_pillar_height = screenH - lower_pillar_height - pillar_gap
             lower_pillar.height = lower_pillar_height
             lower_pillar.y = screenH - lower_pillar_height
-            upper_pillar.height = upper_pllar_height
+            upper_pillar.height = upper_pillar_height
             lower_pillar.passed = false
         end
 
@@ -160,8 +164,8 @@ function love.update(dt)
         end
 
         if hardMode == true and not CheckGameOver() then
-            chillTheme:stop()
-            doomTheme:play()
+            if chillTheme then chillTheme:stop() end
+            if doomTheme then doomTheme:play() end
             speed = 250
             pillar_gap = 175
             doomTimer = doomTimer + dt
@@ -173,13 +177,13 @@ function love.update(dt)
                 love.window.setTitle("DOOOM")
             end
         elseif CheckGameOver() then
-            chillTheme:stop()
-            doomTheme:stop()
+            if chillTheme then chillTheme:stop() end
+            if doomTheme then doomTheme:stop() end
             doomTimer = 0
         end
         -- play sound if score is a multiple of 5
         if score % 5 == 0 and score ~= 0 and soundLock == false then
-            pointSound:play()
+            if pointSound then pointSound:play() end
             soundLock = true
         end
 
@@ -189,16 +193,16 @@ function love.update(dt)
 
         -- win sound
         if score >= highScore and isGameOver == true and winSoundLock == false then
-            winSound:play()
+            if winSound then winSound:play() end
             winSoundLock = true
         elseif score < highScore and isGameOver == true and loseSoundLock == false then
-            loseSound:play()
+            if loseSound then loseSound:play() end
             loseSoundLock = true
         end
 
     elseif paused then
-        doomTheme:pause()
-        chillTheme:pause()
+        if doomTheme then doomTheme:pause() end
+        if chillTheme then chillTheme:pause() end
     end
 end
 
@@ -259,18 +263,18 @@ end
 function love.keypressed(key)
     if key == 'space' and not isGameOver and titleScreen then
         titleScreen = false
-        chillTheme:play()
+        if chillTheme then chillTheme:play() end
     elseif key == 'space' and not isGameOver and not paused then
         floppy.vy = jumpStrength
-        flapSound:play()
-    elseif key == 'p' and not paused and not titleScreen then
+        if flapSound then flapSound:play() end
+    elseif key == 'p' and not paused and not titleScreen and not gameOver then
         paused = true
-    elseif key == 'p' and paused and not titleScreen and not hardMode then
+    elseif key == 'p' and paused and not titleScreen and not hardMode and not gameOver then
         paused = false
-        chillTheme:play()
-    elseif key == 'p' and paused and not titleScreen and hardMode then
+        if chillTheme then chillTheme:play() end
+    elseif key == 'p' and paused and not titleScreen and hardMode and not gameOver then
             paused = false
-            doomTheme:play()
+            if doomTheme then doomTheme:play() end
     elseif key == 'r' and isGameOver then
         floppy.y = screenH / 2
         floppy.x = 100
@@ -282,7 +286,7 @@ function love.keypressed(key)
         lower_pillar.y = screenH - lower_pillar_height
         upper_pillar.y = 0
         lower_pillar.height = lower_pillar_height
-        upper_pillar.height = upper_pllar_height
+        upper_pillar.height = upper_pillar_height
         lower_pillar.passed = false
         score = 0
         hasSaved = false
@@ -290,14 +294,16 @@ function love.keypressed(key)
         winSoundLock = false
         loseSoundLock = false
         soundLock = false
-        flapSound:stop()
-        winSound:stop()
-        loseSound:stop()
-        pointSound:stop()
-        hardMode = false
+        if flapSound and winSound and loseSound and pointSound then
+            flapSound:stop()
+            winSound:stop()
+            loseSound:stop()
+            pointSound:stop()
+            hardMode = false
+        end
         speed = 220
         pillar_gap = 200
-        chillTheme:play()
+        if chillTheme then chillTheme:play() end
         love.window.setTitle("Floppy Bird")
     end
 end
