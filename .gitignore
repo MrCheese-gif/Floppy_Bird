@@ -1,8 +1,18 @@
-things_to_do.md
 
 # just in case
 .idea/
 .vscode/
-.DS_Store
 .opencode/
+.mimocode/
+
+# os files
+.DS_Store
+
+# web edition folder
+
+floppy_bird_WB/
+
+# compiled game
+floppy_bird.love
+
 
