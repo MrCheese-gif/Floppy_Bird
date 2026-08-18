@@ -1,6 +1,6 @@
 # READ ME
 
-> > > > > > > > > ⚠️WARNING: This game is the local version of *Floppy bird* and hence does not work on the web using WebBuilder. It CAN now be compiled using love.js
+> ⚠️WARNING: This game is the local version of *Floppy bird* and hence does not work on the web using WebBuilder. It CAN now be compiled using love.js
 
 # Change log
 
