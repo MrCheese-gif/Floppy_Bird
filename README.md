@@ -1,8 +1,16 @@
 # READ ME
 
-⚠️WARNING: This game is the local version of *Floppy bird* and hence does not work on the web using WebBuilder.
+> ⚠️WARNING: This game is the local version of *Floppy bird* and hence does not work on the web using WebBuilder. It CAN now be compiled using love.js
 
 # Change log
+
+### Version 1.41
+
+- Now compiles to web with love.js. WebBuilder still doesn't work due to assets.
+
+#### Bug Fixes
+
+- Fixed the bug that caused game to crash (occured because of typo in word `pillars`)
 
 ### Version 1.4
 
