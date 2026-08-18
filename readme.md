@@ -1,14 +1,25 @@
 # READ ME
 
-⚠️WARNING: This game is the local version of *Floppy bird* and hence does not work on the web using WebBuilder.
+> > > > > > > > > ⚠️WARNING: This game is the local version of *Floppy bird* and hence does not work on the web using WebBuilder. It CAN now be compiled using love.js
 
 # Change log
+
+### Version 1.41
+
+- Now compiles to web with love.js. WebBuilder still doesn't work due to assets.
+
+#### Bug Fixes
+
+- Fixed the bug that caused game to crash (occured because of typo in word `pillars`)
 
 ### Version 1.4
 
 - Added the ability to pause mid-game when pressing the <kbd>P</kbd> key.
+  
 - Added nil-checkers to the music and sound effects, so that if a sound asset is missing, the game won't crash.
+  
 - Added more bugs to fix later
+  
 - Added more fixes to bug later
 
 #### Bug Fixes
@@ -17,7 +28,7 @@
 
 ### Version 1.3
 
-- Used `love.filesystem` instead of `io.read` to let the game run on web using [Love WebBuilder](https://schellingb.github.io/LoveWebBuilder/package), however, **this version does not work on WebBuilder**. To get the version that works on WebBuilder, click [here](https://www.placeholder.com)
+- Used `love.filesystem` instead of `io.read` to let the game run on web using [Love WebBuilder](https://schellingb.github.io/LoveWebBuilder/package), however, **this version does not work on WebBuilder**. To get the version that works on WebBuilder, click [here](This project was coded in [Lua](www.lua.org). It uses [LÖVE2D](https://www.love2d.org) as the game engine. )
 
 - Due to this, the location of `high_score.txt` has changed
 
@@ -39,7 +50,7 @@
 
 ---
 
-This project was coded in [Lua](www.lua.org). It uses [LÖVE2D](www.love2d.org) as the game engine. 
+This project was coded in [Lua](www.lua.org). It uses [LÖVE2D](https://www.love2d.org) as the game engine. 
 
 ## Requirements
 
