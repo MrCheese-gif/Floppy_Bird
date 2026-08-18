@@ -1,8 +1,8 @@
--- floppy bird WE
+-- floppy bird
 ---@diagnostic disable: undefined-global, lowercase-global
 -- HS: 35
 -- variable definition
-local gameVersion = "1.4 WebEdition"
+local gameVersion = 1.4
 local screenW, screenH = love.graphics.getDimensions()
 local speed = 220
 local gravity = 900
@@ -28,15 +28,15 @@ local pointSound = love.audio.newSource("prrrt.mp3", "static")
 local winSound = love.audio.newSource("drumroll.mp3", "static")
 local loseSound = love.audio.newSource("gameOver.mp3", "static")
 local flapSound = love.audio.newSource("flap.mp3", "static")
-local chillTheme = nil --love.audio.newSource("BGmusic.mp3", "stream")
-local doomTheme = nil --love.audio.newSource("DOOM.mp3", "stream")
+local chillTheme = love.audio.newSource("BGmusic.mp3", "stream")
+local doomTheme = love.audio.newSource("DOOM.mp3", "stream")
 if chillTheme then 
-    chillTheme:setLooping(true) 
-    chillTheme:setVolume(0.2)
+  chillTheme:setLooping(true) 
 end
+chillTheme:setVolume(0.2)
 if doomTheme then
-    doomTheme:setLooping(true)
-    doomTheme:setVolume(0.5)
+doomTheme:setLooping(true)
+doomTheme:setVolume(0.5)
 end
 
 
@@ -48,10 +48,10 @@ local hasSaved = false
 local isGameOver = false
 
 function loadHighScore(path)
-    --if love.filesystem.getInfo(path) then
-    local content = love.filesystem.read(path)
-    highScore = tonumber(content) or 0
-    -- end
+    if love.filesystem.getInfo(path) then
+        local content = love.filesystem.read(path)
+        highScore = tonumber(content) or 0
+    end
 end
 
 function writeHighScore(path)
