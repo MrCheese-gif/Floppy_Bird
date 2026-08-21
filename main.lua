@@ -309,6 +309,8 @@ function love.keypressed(key)
 end
 
 function love.touchpressed(id, x, y)
+        if not isGameOver and titleScreen then
+        titleScreen = false
         if not isGameOver and not paused then
         floppy.vy = jumpStrength
         end
