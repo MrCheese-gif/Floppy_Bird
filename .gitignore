@@ -8,11 +8,14 @@
 # os files
 .DS_Store
 
-# web edition folder
 
-floppy_bird_WB/
 
 # compiled game
 floppy_bird.love
-
-
+# web edition folders
+floppy_bird_WB/
+mobile_compatibilty_build/
+dist/
+builds/
+Web/
+web/
