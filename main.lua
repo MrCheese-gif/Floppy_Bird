@@ -31,8 +31,8 @@ local loseSound = love.audio.newSource("gameOver.mp3", "static")
 local flapSound = love.audio.newSource("flap.mp3", "static")
 local chillTheme = love.audio.newSource("BGmusic.mp3", "stream")
 local doomTheme = love.audio.newSource("DOOM.mp3", "stream")
-if chillTheme then 
-  chillTheme:setLooping(true) 
+if chillTheme then
+  chillTheme:setLooping(true)
 end
 chillTheme:setVolume(0.2)
 if doomTheme then
@@ -167,12 +167,12 @@ function love.update(dt)
             if chillTheme then chillTheme:stop() end
             if doomTheme then doomTheme:play() end
             speed = 250
-            pillar_gap = 175
+            pillar_gap = pillar_gap - 25
             doomTimer = doomTimer + dt
             love.window.setTitle("Floppy death")
             if doomTimer >= 10 then
                 speed = 350
-                pillar_gap = 160
+                pillar_gap = pillar_gap - 35
                 speed = speed + dt
                 love.window.setTitle("DOOOM")
             end
@@ -307,6 +307,12 @@ function love.keypressed(key)
         love.window.setTitle("Floppy Bird")
     end
 end
+
+function love.touchpressed(id, x, y)
+        if not isGameOver and not paused then
+        floppy.vy = jumpStrength
+        end
+    end
 
 
 function CheckCollision(x1, y1, w1, h1, x2, y2, w2, h2)
