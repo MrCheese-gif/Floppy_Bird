@@ -146,8 +146,14 @@ function love.update(dt)
         if lower_pillar.x + lower_pillar.width < 0 then
             lower_pillar.x = screenW
             upper_pillar.x = screenW
-            lower_pillar_height = math.random(50, 400)
-            upper_pillar_height = screenH - lower_pillar_height - pillar_gap
+
+            -- Ensure gap never drops below a safe minimum threshold
+            local current_gap = math.max(100, pillar_gap)
+
+            -- Calculate heights dynamically based on valid gap space
+            lower_pillar_height = math.random(50, math.floor(screenH - current_gap - 50))
+            upper_pillar_height = screenH - lower_pillar_height - current_gap
+
             lower_pillar.height = lower_pillar_height
             lower_pillar.y = screenH - lower_pillar_height
             upper_pillar.height = upper_pillar_height
@@ -167,13 +173,12 @@ function love.update(dt)
             if chillTheme then chillTheme:stop() end
             if doomTheme then doomTheme:play() end
             speed = 250
-            pillar_gap = pillar_gap - 25
+            pillar_gap = 140 -- Set fixed gap value instead of continuously subtracting per frame
             doomTimer = doomTimer + dt
             love.window.setTitle("Floppy death")
             if doomTimer >= 10 then
                 speed = 350
-                pillar_gap = pillar_gap - 35
-                speed = speed + dt
+                pillar_gap = 100 -- Minimum gap for extreme mode
                 love.window.setTitle("DOOOM")
             end
         elseif CheckGameOver() then
@@ -311,10 +316,10 @@ end
 function love.touchpressed(id, x, y)
         if not isGameOver and titleScreen then
         titleScreen = false
-        if not isGameOver and not paused then
+        elseif not isGameOver and not paused then
         floppy.vy = jumpStrength
         end
-    end
+end
 
 
 function CheckCollision(x1, y1, w1, h1, x2, y2, w2, h2)
