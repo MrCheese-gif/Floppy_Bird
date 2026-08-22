@@ -7,6 +7,9 @@
 
 # os files
 .DS_Store
+_MACOSX
+
+test/
 
 
 
