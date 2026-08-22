@@ -113,6 +113,16 @@ You will see your high score there. Simply change it to your desired score, pres
 
 > Since the default high score is set to 0, doom mode will activate once you go through the first pillars on your first run.
 
+# Exporting to web with love.js
+To export to the web, love.js is recommended. Love WebBuilder can work, but it requires the stripping of music.
+
+To export the compatible game using love.js, first, ensure love.js is installed, then run:
+```bash
+npx love.js --compatibility --memory 67108864 your-compiled-file.love output-dir
+```
+and then enter the title of the game (this can be anything you want).
+
+
 # Bugs
 
 > To report bugs or request features, email alrisdhanwani@protonmail.com

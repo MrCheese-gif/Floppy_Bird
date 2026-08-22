@@ -370,7 +370,7 @@ function love.update(dt)
 
         if doomTimer >= 10 then
             speed = 350
-            pillar_gap = 100
+            pillar_gap = 130
             love.window.setTitle("DOOOM")
         end
     elseif isGameOver then
